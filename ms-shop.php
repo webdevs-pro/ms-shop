@@ -1,103 +1,96 @@
 <?php
 /**
-* Plugin Name: MS Shop
+* Plugin Name: MS Shop Shortcodes
 * Plugin URI: https://github.com/webdevs-pro/ms-shop
-* Description: Custom shortcode for shop page.
+* Description: Custom shortcodes for shop page.
 * Version: 1.0
 * Author: Magnific Soft
 * Author URI: https://magnificsoft.com/
 */
 
 
-// load assets
-add_action('wp_enqueue_scripts', 'ms_shop_enqueue_scripts');
-function ms_shop_enqueue_scripts() {
+
+
+// include files
+require_once dirname( __FILE__ ) . '/inc/class-filters.php';
+require_once dirname( __FILE__ ) . '/inc/class-content.php';
+require_once dirname( __FILE__ ) . '/inc/class-nav.php';
+
+
+
+
+// enqueue scripts and styles
+add_action('wp_enqueue_scripts', function() {
    wp_register_style( 'ms-shop-styles', plugins_url('/assets/ms-shop.css', __FILE__), false, '1.0.0', 'all');
    wp_enqueue_style( 'ms-shop-styles' );
-   wp_enqueue_script( 'ms-shop-script', plugins_url('/assets/ms-shop.js', __FILE__), array( 'jquery' ) );
-}
+   wp_enqueue_script( 'ms-shop-script', plugins_url('/assets/ms-shop.js', __FILE__), array( 'jquery' ), '1.0.0' );
+   wp_localize_script( 
+      'ms-shop-script', 
+      'msShopAjax', 
+      array(
+          'url'   => admin_url( 'admin-ajax.php' ),
+      )
+   );
+});
 
 
-function ms_render_shop( $atts ) {
-
-   $type = $atts['type'];
-
-   $parent_cat = get_term_by('slug', $atts['cat'], 'product_cat');
-
-   $child_cats = get_term_children($parent_cat->term_id, 'product_cat');
-
-   $html = '';
-
-   foreach($child_cats as $cat) {
-
-      $cat_title = get_term($cat, 'product_cat')->name;
-
-      $cat_cover_image = get_term_meta($cat, 'category_cover_image', true);
-
-      $html .= '
-         <div class="ms-products-category">
-            <div class="ms-products-category-heading" style="background-image: url(' . wp_get_attachment_image_url($cat_cover_image , 'full') . ')">
-               <div class="ms-products-category-heading">
-                  ' . $cat_title . '
-               </div>
-            </div>
-      ';
 
 
-      $args = array(
-         'numberposts' => -1,
-         'post_type' => 'product',
-         // 'orderby' => 'date',
-         // 'order' => 'DESC',
-         'tax_query' => array(
-            'relation' => 'AND',
-            array(
-               'taxonomy' => 'product_type',
-               'field'    => 'slug',
-               'terms'    => $type,
-            ),
-            array(
-               'taxonomy' => 'product_cat',
-               'field'    => 'term_id',
-               'terms'    => $cat,
-            ),
-         ),
-      );
-      $products = get_posts($args);
+// add content shortcode
+add_shortcode('ms-shop-content', function($atts) {
 
-      if($products) {
+   ob_start();
 
-         $html .= '
-            <div class="ms-products">
-         
-         ';        
+      echo '<div id="ms-shop-content" data-args="' . json_encode($atts) . '">';
+      new MSShopContent($atts);
+      echo '</div>';
+      
+   $content = ob_get_clean();
+   return $content;
 
-         foreach($products as $product) {
-
-            $html .= '
-               <div class="ms-product product">
-            
+});
 
 
-               </div>
-            ';
+
+// add filters shortcode
+add_shortcode('ms-shop-filters', function($atts) {
+   ob_start();
+
+      echo '<div id="ms-shop-filters">';
+      new MSShopFilters($atts);
+      echo '</div>';
+
+   $content = ob_get_clean();
+   return $content;
+});
 
 
-         }
 
-         $html .= '</div> <!-- ms-products -->';        
 
-      }
+// add nav shortcode
+add_shortcode('ms-shop-nav', function($atts) {
+   ob_start();
 
-      $html .= '</div> <!-- ms-products-category -->';
+      echo '<div id="ms-shop-nav">';
+      new MSShopNav($atts);
+      echo '</div>';
 
+   $content = ob_get_clean();
+   return $content;
+});
+
+
+
+add_action( 'wp_ajax_ms_shop_page_content', 'ms_shop_page_ajax_content' ); 
+add_action( 'wp_ajax_nopriv_ms_shop_page_content',  'ms_shop_page_ajax_content' );
+function ms_shop_page_ajax_content() {
+
+   $args = $_POST['args'];
+
+   if(is_array($args)) {
+      new MSShopContent($args);
    }
 
-
-
-
-   return $html;
+   die();
 
 }
-add_shortcode( 'ms-shop', 'ms_render_shop' );
-

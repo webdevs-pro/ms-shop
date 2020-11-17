@@ -1,0 +1,78 @@
+
+/* NAV */
+#category-select {
+   list-style: none;
+}
+#category-select li {
+   cursor: pointer;
+}
+#category-select li.active {
+   background-color: #ddd;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* CONTENT */
+#ms-shop-content {
+   display: grid;
+}
+
+#ms-shop-content .ms-products-category-heading {
+   margin-top: 50px;
+   background-size: cover;
+   background-position: center center;
+   display: flex;
+   align-items: flex-end;
+   padding: 20px 40px;
+}
+
+#ms-shop-content .ms-products-category-title {
+   font-size: 38px;
+   font-weight: 700;
+   color: #fff;
+   letter-spacing: -0.03em;
+}
+
+
+#ms-shop-content .ms-product {
+   border: 1px solid #D2D2D2;
+}
+
+#ms-shop-content .ms-product .ms-product-image {
+   display: flex;
+   height: 150px;
+}
+#ms-shop-content .ms-product .ms-product-image img {
+   object-fit: cover;
+}
+
+#ms-shop-content .ms-product .ms-product-info {
+   padding: 10px;
+}
+
+#ms-shop-content .ms-product .ms-product-info h3 {
+   text-align: center;
+   font-weight: normal;
+   font-size: 15px;
+}
+
+@media(min-width: 1025px) {
+   #ms-shop-content {
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-gap: 20px;
+   }
+   #ms-shop-content .ms-products-category-heading {
+      height: 235px;
+      grid-column-start: 1;
+      grid-column-end: 5;
+   }
+}
