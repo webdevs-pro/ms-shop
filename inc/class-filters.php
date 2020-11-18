@@ -26,6 +26,13 @@ class MSShopFilters {
       </select> -->
       <?php
 
+      // elements
+
+
+
+
+
+      // child cats
       $parent_term = get_term($atts['cat'], 'product_cat');
       $child_terms = get_term_children($parent_term->term_id, 'product_cat');
 
@@ -54,7 +61,7 @@ class MSShopFilters {
             $data_args = array(
                'cat' => $child_term_id,
                'childrens' => false,
-               'headings' => false
+               'headings' => true
             );
 
             echo "<option data-args=".json_encode($data_args).">".$child_term->name."</option>";

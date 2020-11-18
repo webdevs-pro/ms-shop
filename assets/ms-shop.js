@@ -47,6 +47,7 @@ jQuery(document).ready(function($) {
       .done( function( response, textStatus, jqXHR ) {
       //   console.log( 'AJAX done', textStatus, jqXHR, jqXHR.getAllResponseHeaders() );
          $('#ms-shop-content').html(response);
+         // console.log(response);
       })
       .fail( function( jqXHR, textStatus, errorThrown ) {
          console.log( 'AJAX failed', jqXHR.getAllResponseHeaders(), textStatus, errorThrown );

@@ -58,7 +58,7 @@ class MSShopNav {
             $data_args = array(
                'cat' => $child_term_id,
                'childrens' => false,
-               'headings' => false
+               'headings' => true
             );
 
             echo "<li data-args=".json_encode($data_args).">".$child_term->name."</li>";
